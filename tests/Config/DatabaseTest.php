@@ -1,9 +1,8 @@
 <?php
 
-namespace Budimansol\PHP\MVC\Tests;
+namespace Budimansol\PHP\MVC\Config;
 
 use PHPUnit\Framework\TestCase;
-use Budimansol\PHP\MVC\Config\Database;
 
 class DatabaseTest extends TestCase{
     
