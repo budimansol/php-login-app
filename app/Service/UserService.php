@@ -8,6 +8,8 @@ use Budimansol\PHP\MVC\App\Model\UserLoginRequest;
 use Budimansol\PHP\MVC\App\Model\UserLoginResponse;
 use Budimansol\PHP\MVC\App\Model\UserRegisterRequest;
 use Budimansol\PHP\MVC\App\Model\UserRegisterResponse;
+use Budimansol\PHP\MVC\App\Model\UserUpdatePasswordRequest;
+use Budimansol\PHP\MVC\App\Model\UserUpdatePasswordResponse;
 use Budimansol\PHP\MVC\App\Model\UserUpdateRequest;
 use Budimansol\PHP\MVC\App\Model\UserUpdateResponse;
 use Budimansol\PHP\MVC\App\Repository\UserRepository;
@@ -123,6 +125,41 @@ class UserService {
             throw new ValidationException("Name can not Blank");
         } else if ($request->email == null || trim($request->email) == "") {
             throw new ValidationException("Email can not Blank");
+        }
+    }
+    
+    public function updatePasswordUser(UserUpdatePasswordRequest $request) : UserUpdatePasswordResponse{
+        $this->validateUpdatePasswordRequest($request);
+        try{
+            Database::beginTransaction();
+            $user = $this->repository->getById($request->id);
+            if ($user == null){
+                throw new ValidationException("User Not Found");
+            }
+            
+            if (!password_verify($request->oldPassword, $user->password)){
+                throw new ValidationException("Old Password is Wrong");
+            }
+            
+            $user->password = password_hash($request->newPassword, PASSWORD_BCRYPT);
+            $this->repository->update($user);
+            Database::commitTransaction();
+            $response = new UserUpdatePasswordResponse();
+            $response->user = $user;
+            return $response;
+        } catch (Exception $exception){
+            Database::rollBackTransaction();
+            throw $exception;
+        }
+    }
+    
+    public function validateUpdatePasswordRequest(UserUpdatePasswordRequest $request){
+        if ($request->id == null || trim($request->id) == "") {
+            throw new ValidationException("ID can not Blank");
+        } else if ($request->oldPassword == null || trim($request->oldPassword) == "") {
+            throw new ValidationException("Old Password can not Blank");
+        } else if ($request->newPassword == null || trim($request->newPassword) == "") {
+            throw new ValidationException("New Password can not Blank");
         }
     }
 }

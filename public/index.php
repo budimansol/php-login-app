@@ -25,6 +25,9 @@ Routes::add('GET', '/users/logout', UserController::class, 'logout', [MustLoginM
 //Update Profile
 Routes::add('GET', '/users/profile', UserController::class, 'updateProfile', [MustLoginMiddleware::class]);
 Routes::add('POST', '/users/profile', UserController::class, 'postUpdateProfile', [MustLoginMiddleware::class]);
+//Update Password
+Routes::add('GET', '/users/password', UserController::class, 'updatePassword', [MustLoginMiddleware::class]);
+Routes::add('POST', '/users/password', UserController::class, 'postUpdatePassword', [MustLoginMiddleware::class]);
 
 
 Routes::run();
