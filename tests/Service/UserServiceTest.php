@@ -56,6 +56,18 @@ class UserServiceTest extends TestCase{
         $response = $this->userService->register($request);
     }
     
+    public function testRegisterWeak(){
+        $this->expectException(ValidationException::class);
+
+        $request = new UserRegisterRequest();
+        $request->id = "123";
+        $request->name = "Budiman";
+        $request->email = "budiman@mail.com";
+        $request->password = "123";
+
+        $response = $this->userService->register($request);
+    }
+    
     public function testDuplicate(){
         $user = new User();
         $user->id = "budiman";

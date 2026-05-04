@@ -50,6 +50,6 @@ class MustNotLoginMiddlewareTest extends TestCase
         $_COOKIE[SessionService::$COOKIE_NAME] = $session->id;
 
         $this->middleware->before();
-        $this->expectOutputRegex("");
+        $this->expectOutputString("Location: /");
     }
 }

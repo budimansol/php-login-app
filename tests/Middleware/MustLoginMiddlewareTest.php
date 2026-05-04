@@ -28,7 +28,7 @@ class MustLoginMiddlewareTest extends TestCase{
     
     public function testBeforeGuest(): void {
         $this->middleware->before();
-        $this->expectOutputRegex("[Location: users/login]");
+        $this->expectOutputRegex("[Location: /users/login]");
     }
 
     public function testBeforeLoginUser(): void

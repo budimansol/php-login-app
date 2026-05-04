@@ -63,6 +63,8 @@ class UserService {
             throw new ValidationException("Email can not Blank");
         } else if ($request->password == null || trim($request->password) == ""){
             throw new ValidationException("Password can not Blank");
+        } else if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', $request->password)) {
+            throw new ValidationException("Password Lemah");
         }
     }
     
@@ -118,7 +120,7 @@ class UserService {
         
     }
     
-    public function validateUpdateRequest(UserUpdateRequest $request){
+    private function validateUpdateRequest(UserUpdateRequest $request){
         if ($request->id == null || trim($request->id) == "") {
             throw new ValidationException("ID can not Blank");
         } else if ($request->name == null || trim($request->name) == "") {
@@ -141,6 +143,10 @@ class UserService {
                 throw new ValidationException("Old Password is Wrong");
             }
             
+            if (password_verify($request->newPassword, $user->password)){
+                throw new ValidationException("Cannot use old Password");
+            }
+            
             $user->password = password_hash($request->newPassword, PASSWORD_BCRYPT);
             $this->repository->update($user);
             Database::commitTransaction();
@@ -153,13 +159,15 @@ class UserService {
         }
     }
     
-    public function validateUpdatePasswordRequest(UserUpdatePasswordRequest $request){
+    private function validateUpdatePasswordRequest(UserUpdatePasswordRequest $request){
         if ($request->id == null || trim($request->id) == "") {
             throw new ValidationException("ID can not Blank");
         } else if ($request->oldPassword == null || trim($request->oldPassword) == "") {
             throw new ValidationException("Old Password can not Blank");
         } else if ($request->newPassword == null || trim($request->newPassword) == "") {
             throw new ValidationException("New Password can not Blank");
+        } else if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', $request->newPassword)){
+            throw new ValidationException("Password is Weak");
         }
     }
 }
